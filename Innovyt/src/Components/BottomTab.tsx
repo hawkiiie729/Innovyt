@@ -4,6 +4,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Tables from '../Screens/TabScreens/Tables';
 import {responsiveHeight} from 'react-native-responsive-dimensions';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import Orders from '../Screens/TabScreens/Orders';
 import Profile from '../Screens/TabScreens/Profile';
 import Setting from '../Screens/TabScreens/Setting';
@@ -67,10 +68,10 @@ const BottomTab = () => {
           headerShown: false,
           tabBarIcon: ({focused}) => (
             <>
-              <Icon
-                name="table-rows"
+              <Ionicons
+                name="list-sharp"
                 color={focused ? '#cb2227' : 'grey'}
-                size={30}
+                size={35}
                 style={{justifyContent: 'center', alignItems: 'center'}}
               />
               {/* {focused ? (
@@ -128,7 +129,7 @@ const BottomTab = () => {
           tabBarInactiveTintColor:'grey'
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Setting"
         component={Setting}
         options={{
@@ -141,27 +142,14 @@ const BottomTab = () => {
                 size={34}
                 style={{justifyContent: 'center', alignItems: 'center'}}
               />
-              {/* {focused ? (
-                <View
-                  style={{
-                    backgroundColor: '#cb2227',
-                    height: 4,
-                    width: 4,
-                    borderRadius: 2,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginTop:responsiveHeight(0.2)
-                    // marginLeft: responsiveWidth(3.8),
-                  }}
-                />
-              ) : null} */}
+             
             </>
           ),
           tabBarLabelStyle:{bottom:4,fontWeight:'600'},
           tabBarActiveTintColor:'#cb2227',
           tabBarInactiveTintColor:'grey'
         }}
-      />
+      /> */}
     </Tab.Navigator>
   );
 };

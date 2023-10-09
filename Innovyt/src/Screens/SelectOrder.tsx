@@ -6,8 +6,9 @@ import {
   FlatList,
   ScrollView,
   Image,
+  Dimensions,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   responsiveFontSize,
   responsiveHeight,
@@ -16,17 +17,64 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';
 import CustomizeItem from '../Components/CustomizeItem';
+import axios from 'axios';
+
+const {height, width} = Dimensions.get('screen');
+
+const apiUrl =
+  'https://ezzybite-pos-api-nest-dev.azurewebsites.net/api/v1/price-menu/store-menu-type?include-price-menu=true';
+
+const headers = {
+  tenantcode: 'buono-pizza',
+  clientapikey: '64e27ee889-TAB',
+  clientapisecrete: 'YkG5849CXHfbxiHTcLztQEhnJ',
+};
 
 const SelectOrder = () => {
   const [selectedItem, setSelectedItem] = useState('All');
   const navigation = useNavigation();
   const [isBottomSheetVisible, setBottomSheetVisible] = useState(false);
+  const [focus, setFocus] = useState(false);
+  const [itemList, setItemList] = useState([]);
+  const [customizeItemProp, setCustomizeItemProp] = useState({});
+
+  const textInputOnFocus = () => {
+    setFocus(!focus);
+  };
 
   const toggleBottomSheet = () => {
     setBottomSheetVisible(!isBottomSheetVisible);
   };
 
-  const food = [
+  const fetchData = async () => {
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'GET',
+        headers: headers,
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      console.log('====================================');
+      console.log('data', data[0]?.priceMenu?.categories[0]?.items);
+      console.log('====================================');
+      setItemList(data[0]?.priceMenu?.categories[1]?.items);
+      //setFood(data[0]?.priceMenu?.categories);
+      // console.log(data);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+    // setVerticalItem(food.find((item)=>item?.name === selectedItem).items)
+  }, []);
+
+  const foodd = [
     {id: 1, name: 'All'},
     {id: 2, name: 'Staters'},
     {id: 3, name: 'Appetizers'},
@@ -42,6 +90,7 @@ const SelectOrder = () => {
       setSelectedItem(itemName);
     }
   };
+  console.log('itemlist', itemList);
 
   const renderItem = ({item, index}: any) => (
     <>
@@ -105,11 +154,15 @@ const SelectOrder = () => {
         <TextInput
           placeholder="Search for food item"
           placeholderTextColor={'grey'}
+          onFocus={textInputOnFocus}
+          onSubmitEditing={() => {
+            setFocus(false);
+          }}
           style={{
             width: '90%',
             height: 50,
-            borderWidth: 1,
-            borderColor: 'black',
+            borderWidth: focus ? 3 : 1,
+            borderColor: focus ? '#feca3f' : 'grey',
             alignSelf: 'center',
             marginTop: responsiveHeight(3.5),
             borderRadius: 10,
@@ -169,7 +222,7 @@ const SelectOrder = () => {
         }}
       />
       <FlatList
-        data={food}
+        data={foodd}
         horizontal={true}
         renderItem={renderItem}
         keyExtractor={item => item?.id}
@@ -177,79 +230,88 @@ const SelectOrder = () => {
         extraData={selectedItem}
       />
       <ScrollView style={{marginTop: responsiveHeight(1)}}>
-        <View style={{marginBottom: responsiveHeight(4)}}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-              alignItems: 'center',
-            }}>
-            <TouchableOpacity
-              style={{elevation: 20}}
-              onPress={toggleBottomSheet}>
-              <Image
-                source={require('../Assets/food.png')}
-                style={{
-                  height: responsiveHeight(9),
-                  width: responsiveWidth(18),
-                  borderRadius: 10,
-                }}
-              />
-            </TouchableOpacity>
-            <CustomizeItem
-              isVisible={isBottomSheetVisible}
-              toggleModal={toggleBottomSheet}
-              setIsVisible={setBottomSheetVisible}
-            />
-            <View style={{flexDirection: 'column', right: responsiveWidth(5)}}>
-              <Image
-                source={require('../Assets/veg.png')}
-                style={{
-                  height: responsiveHeight(1.5),
-                  width: responsiveWidth(3.2),
-                  marginBottom: responsiveHeight(0.5),
-                }}
-              />
-              <Text style={{color: 'black', fontWeight: '900'}}>
-                Nasu Dengaku
-              </Text>
-              <Text style={{color: 'black', fontWeight: '500'}}>
-                $ 6.80{' '}
-                <Text style={{color: '#cb2227', fontWeight: '600'}}>
-                  Customizable
-                </Text>
-              </Text>
-            </View>
-            <View style={{flexDirection: 'row'}}>
-              <TouchableOpacity>
-                <Icon name="remove" size={25} color="black" />
-              </TouchableOpacity>
-              <Text
-                style={{
-                  color: 'black',
-                  textAlignVertical: 'center',
-                  marginHorizontal: responsiveWidth(2),
-                }}>
-                0
-              </Text>
+        {itemList?.map((item, index) => (
+          <View key={index} style={{marginBottom: responsiveHeight(4)}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-around',
+                alignItems: 'center',
+              }}>
               <TouchableOpacity
-                style={{backgroundColor: '#feca3f', borderRadius: 5}}>
-                <Icon name="add" size={25} color="black" />
+                style={{elevation: 20}}
+                onPress={() => {
+                  setCustomizeItemProp(item);
+                  toggleBottomSheet();
+                }}>
+                <Image
+                  source={{uri: item?.featureImage}}
+                  style={{
+                    height: responsiveHeight(9),
+                    width: responsiveWidth(18),
+                    borderRadius: 10,
+                  }}
+                />
               </TouchableOpacity>
+
+              <View
+                style={{flexDirection: 'column', right: responsiveWidth(5)}}>
+                <Image
+                  source={require('../Assets/veg.png')}
+                  style={{
+                    height: responsiveHeight(1.5),
+                    width: responsiveWidth(3.2),
+                    marginBottom: responsiveHeight(0.5),
+                  }}
+                />
+                <Text style={{color: 'black', fontWeight: '900'}}>
+                  {item?.name?.slice(0, 18) + '...'}
+                </Text>
+                <Text style={{color: 'black', fontWeight: '500'}}>
+                  $ 6.80{' '}
+                  <Text style={{color: '#cb2227', fontWeight: '600'}}>
+                    Customizable
+                  </Text>
+                </Text>
+              </View>
+              <View style={{flexDirection: 'row'}}>
+                <TouchableOpacity>
+                  <Icon name="remove" size={25} color="black" />
+                </TouchableOpacity>
+                <Text
+                  style={{
+                    color: 'black',
+                    textAlignVertical: 'center',
+                    marginHorizontal: responsiveWidth(2),
+                  }}>
+                  0
+                </Text>
+                <TouchableOpacity
+                  style={{backgroundColor: '#feca3f', borderRadius: 5}}>
+                  <Icon name="add" size={25} color="black" />
+                </TouchableOpacity>
+              </View>
             </View>
+            <View
+              style={{
+                width: width * 0.9,
+                marginHorizontal: responsiveWidth(5),
+                height: height * 0.0004,
+                backgroundColor: '#242424',
+                marginTop: responsiveHeight(2),
+              }}
+            />
           </View>
-          <View
-            style={{
-              width: responsiveWidth(90),
-              marginHorizontal: responsiveWidth(5),
-              height: responsiveHeight(0.03),
-              backgroundColor: 'black',
-              marginTop: responsiveHeight(2),
-            }}
-          />
-        </View>
+        ))}
+        <CustomizeItem
+          customItem={customizeItemProp}
+          setCustomItem={setCustomizeItemProp}
+          isVisible={isBottomSheetVisible}
+          toggleModal={toggleBottomSheet}
+          setIsVisible={setBottomSheetVisible}
+        />
         {/* 2 Item */}
-        <View style={{marginBottom: responsiveHeight(4)}}>
+        {/* <View style={{marginBottom: responsiveHeight(4)}}>
           <View
             style={{
               flexDirection: 'row',
@@ -568,7 +630,7 @@ const SelectOrder = () => {
               marginTop: responsiveHeight(2),
             }}
           />
-        </View>
+        </View> */}
       </ScrollView>
       <View
         style={{

@@ -5,8 +5,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   TextInput,
+  Dimensions,
 } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import {
   responsiveFontSize,
   responsiveHeight,
@@ -15,8 +16,21 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useNavigation} from '@react-navigation/native';
 
+const {height,width}=Dimensions.get("screen")
+
 const BottomSheet = ({isVisible, toggleModal, setIsVisible}: any) => {
   const navigation = useNavigation();
+
+  const [focus1, setFocus1] = useState(false);
+  const [focus2, setFocus2] = useState(false);
+
+  const textInputOnFocus1 = () => {
+    setFocus1(!focus1);
+  };
+  const textInputOnFocus2 = () => {
+    setFocus2(!focus2);
+  };
+
   return (
     <Modal
       animationType="slide"
@@ -34,7 +48,7 @@ const BottomSheet = ({isVisible, toggleModal, setIsVisible}: any) => {
             }}>
             Guest Info
           </Text>
-          <View style={{alignItems: 'flex-end', bottom: responsiveHeight(3)}}>
+          <View style={{alignItems: 'flex-end', bottom:height*0.03}}>
             <TouchableOpacity onPress={toggleModal}>
               <Icon name="close" size={28} color="red" />
             </TouchableOpacity>
@@ -43,34 +57,44 @@ const BottomSheet = ({isVisible, toggleModal, setIsVisible}: any) => {
             style={{
               justifyContent: 'center',
               alignItems: 'center',
-              marginTop: responsiveHeight(2),
+              marginTop: height*0.02,
             }}>
             <TextInput
               placeholder="Guest Name"
               placeholderTextColor={'grey'}
+              onFocus={textInputOnFocus1}
+              onSubmitEditing={() => {
+                setFocus1(false);
+              }}
+              keyboardType='default'
               style={{
-                borderWidth: 1,
-                width: responsiveWidth(90),
-                marginHorizontal: responsiveWidth(5),
-                height: responsiveHeight(5),
+                borderWidth: focus1 ? 3 : 1,
+                width: width*0.9,
+                marginHorizontal:width*0.05,
+                height: height*0.05,
                 borderRadius: 12,
                 padding: 10,
-                borderColor: 'grey',
+                borderColor: focus1 ? '#feca3f' : 'grey',
                 color: 'black',
-                marginBottom: responsiveHeight(3),
+                marginBottom: height*0.03,
               }}
             />
             <TextInput
               placeholder="Contact Number"
               placeholderTextColor={'grey'}
+              onFocus={textInputOnFocus2}
+              onSubmitEditing={() => {
+                setFocus2(false);
+              }}
+              keyboardType='phone-pad'
               style={{
-                borderWidth: 1,
-                width: responsiveWidth(90),
-                marginHorizontal: responsiveWidth(5),
-                height: responsiveHeight(5),
+                borderWidth: focus2 ? 3 : 1,
+                width: width*0.9,
+                marginHorizontal:width*0.05,
+                height: height*0.05,
                 borderRadius: 12,
                 padding: 10,
-                borderColor: 'grey',
+                borderColor: focus2 ? '#feca3f' : 'grey',
                 color: 'black',
               }}
             />
@@ -80,7 +104,7 @@ const BottomSheet = ({isVisible, toggleModal, setIsVisible}: any) => {
               flexDirection: 'row',
               justifyContent: 'space-between',
               alignItems: 'center',
-              marginTop: responsiveHeight(2.5),
+              marginTop: height*0.025,
             }}>
             <Text style={{color: 'black', fontWeight: '900'}}>
               No. of Guests
@@ -93,7 +117,7 @@ const BottomSheet = ({isVisible, toggleModal, setIsVisible}: any) => {
                 style={{
                   color: 'black',
                   textAlignVertical: 'center',
-                  marginHorizontal: responsiveWidth(2),
+                  marginHorizontal: width*0.02,
                 }}>
                 0
               </Text>
@@ -109,11 +133,11 @@ const BottomSheet = ({isVisible, toggleModal, setIsVisible}: any) => {
             }}>
             <View
               style={{
-                marginTop: responsiveHeight(2.5),
+                marginTop: height*0.025,
                 backgroundColor: '#feca3f',
-                height: responsiveHeight(6),
-                width: responsiveWidth(90),
-                marginHorizontal: responsiveWidth(5),
+                height: height*0.06,
+                width: width*0.9,
+                marginHorizontal: width*0.05,
                 alignSelf: 'center',
                 borderRadius: 8,
                 justifyContent: 'center',
@@ -147,7 +171,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
-    height: responsiveHeight(40),
+    height: height*0.38,
   },
 });
 

@@ -16,14 +16,24 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import Iconn from 'react-native-vector-icons/FontAwesome';
 import {useNavigation} from '@react-navigation/native';
 
-const CustomizeItem = ({isVisible, toggleModal, setIsVisible}: any) => {
+const CustomizeItem = ({
+  customItem,
+  setCustomItem,
+  isVisible,
+  toggleModal,
+  setIsVisible,
+}: any) => {
   const navigation = useNavigation();
+  console.log('custom', customItem);
+
   return (
     <Modal
       animationType="slide"
       transparent={true}
       visible={isVisible}
-      onRequestClose={toggleModal}>
+      onRequestClose={()=>{
+         setCustomItem({})
+        toggleModal()}}>
       <View
         style={{
           flex: 1,
@@ -54,7 +64,7 @@ const CustomizeItem = ({isVisible, toggleModal, setIsVisible}: any) => {
           </View>
           <View>
             <Image
-              source={require('../Assets/customFood.png')}
+              source={{uri:customItem?.featureImage}}
               style={{
                 alignSelf: 'center',
                 width: responsiveWidth(90),
@@ -81,7 +91,7 @@ const CustomizeItem = ({isVisible, toggleModal, setIsVisible}: any) => {
                     textAlign: 'center',
                     marginLeft: responsiveWidth(2),
                   }}>
-                  Nasu Dengaku
+                 {customItem?.name}
                 </Text>
                 <Text
                   style={{
@@ -317,10 +327,11 @@ const CustomizeItem = ({isVisible, toggleModal, setIsVisible}: any) => {
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-            <TouchableOpacity onPress={()=>{
-                navigation.navigate("OrderSummary")
-                setIsVisible(!isVisible)
-            }}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('OrderSummary');
+                setIsVisible(!isVisible);
+              }}>
               <View
                 style={{
                   height: responsiveHeight(5),
