@@ -91,7 +91,7 @@ const CustomizeItem = ({
                     textAlign: 'center',
                     marginLeft: responsiveWidth(2),
                   }}>
-                 {customItem?.name}
+                 {customItem?.name?.slice(0,25)+"..."}
                 </Text>
                 <Text
                   style={{

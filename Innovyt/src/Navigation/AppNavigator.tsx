@@ -8,6 +8,7 @@ import BottomTab from '../Components/BottomTab';
 import SelectOrder from '../Screens/SelectOrder';
 import OrderSummary from '../Screens/OrderSummary';
 import Payment from '../Screens/Payment';
+import Categories from '../Screens/Categories';
 
 const Stack = createStackNavigator();
 
@@ -31,6 +32,11 @@ const AppNavigator = () => {
         <Stack.Screen
           name="HomeTabs"
           component={HomeTabs}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Categories"
+          component={Categories}
           options={{headerShown: false}}
         />
         <Stack.Screen

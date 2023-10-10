@@ -22,7 +22,7 @@ import axios from 'axios';
 const {height, width} = Dimensions.get('screen');
 
 const apiUrl =
-  'https://ezzybite-pos-api-nest-dev.azurewebsites.net/api/v1/price-menu/store-menu-type?include-price-menu=true';
+  'https://ezzybite-pos-api-nest-dev.azurewebsites.net/api/v1/price-menu/store-view?include-items=true';
 
 const headers = {
   tenantcode: 'buono-pizza',
@@ -30,13 +30,22 @@ const headers = {
   clientapisecrete: 'YkG5849CXHfbxiHTcLztQEhnJ',
 };
 
-const SelectOrder = () => {
-  const [selectedItem, setSelectedItem] = useState('All');
+const SelectOrder = ({route}: any) => {
+  const [selectedItem, setSelectedItem] = useState('');
   const navigation = useNavigation();
   const [isBottomSheetVisible, setBottomSheetVisible] = useState(false);
   const [focus, setFocus] = useState(false);
   const [itemList, setItemList] = useState([]);
   const [customizeItemProp, setCustomizeItemProp] = useState({});
+  const [subCategory, setSubCategory] = useState([]);
+
+  const {item} = route.params;
+
+  // setSubCategory(item?.categories)
+
+  console.log('subcat', subCategory);
+
+  // console.log("item",item);
 
   const textInputOnFocus = () => {
     setFocus(!focus);
@@ -61,7 +70,7 @@ const SelectOrder = () => {
       console.log('====================================');
       console.log('data', data[0]?.priceMenu?.categories[0]?.items);
       console.log('====================================');
-      setItemList(data[0]?.priceMenu?.categories[1]?.items);
+      //setItemList(data[0]?.priceMenu?.categories[1]?.items);
       //setFood(data[0]?.priceMenu?.categories);
       // console.log(data);
     } catch (error) {
@@ -71,16 +80,18 @@ const SelectOrder = () => {
 
   useEffect(() => {
     fetchData();
+    setSubCategory(item?.categories);
+
     // setVerticalItem(food.find((item)=>item?.name === selectedItem).items)
   }, []);
 
-  const foodd = [
-    {id: 1, name: 'All'},
-    {id: 2, name: 'Staters'},
-    {id: 3, name: 'Appetizers'},
-    {id: 4, name: 'MainCourse'},
-    {id: 5, name: 'SweetDish'},
-  ];
+  // const foodd = [
+  //   {id: 1, name: 'All'},
+  //   {id: 2, name: 'Staters'},
+  //   {id: 3, name: 'Appetizers'},
+  //   {id: 4, name: 'MainCourse'},
+  //   {id: 5, name: 'SweetDish'},
+  // ];
   //   const keyExtractor = (item, index) => index.toString();
 
   const toggleItemSelection = (itemName: any) => {
@@ -96,11 +107,14 @@ const SelectOrder = () => {
     <>
       <View key={index} style={{flexDirection: 'column'}}>
         <TouchableOpacity
-          onPress={() => toggleItemSelection(item?.name)}
+          onPress={() => {
+             setItemList(item?.items)
+            toggleItemSelection(item?.name);
+          }}
           style={{
             backgroundColor:
               selectedItem === item?.name ? '#cb2227' : 'transparent',
-            width: responsiveWidth(20),
+            width: responsiveWidth(30),
             height: responsiveHeight(4),
             margin: 8,
             alignItems: 'center',
@@ -146,7 +160,7 @@ const SelectOrder = () => {
             textAlignVertical: 'center',
             fontWeight: '900',
           }}>
-          Select Order
+          {item?.title}
         </Text>
         <Icon name="notifications" size={23} color="black" />
       </View>
@@ -222,7 +236,7 @@ const SelectOrder = () => {
         }}
       />
       <FlatList
-        data={foodd}
+        data={subCategory}
         horizontal={true}
         renderItem={renderItem}
         keyExtractor={item => item?.id}

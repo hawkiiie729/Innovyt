@@ -128,7 +128,7 @@ const BottomSheet = ({isVisible, toggleModal, setIsVisible}: any) => {
           </View>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('SelectOrder');
+              navigation.navigate('Categories');
               setIsVisible(!isVisible);
             }}>
             <View
