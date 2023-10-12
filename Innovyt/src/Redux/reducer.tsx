@@ -1,27 +1,17 @@
-// reducers/userReducer.ts
-import { priceMenu } from "./AllType";
-interface UserState {
-  data: priceMenu;
-  error: any;
-}
-
-const initialState: UserState = {
-  data: null,
-  error: null,
+// reducers.js
+const initialState = {
+  count: 0,
 };
 
-const userReducer = (state = initialState, action: any) => {
+const counterReducer = (state = initialState, action:any) => {
   switch (action.type) {
-    case 'SET_DETAIL':
-      return {
-        ...state,
-        data: action.payload,
-        error: null,
-      };
-
+    case 'INCREMENT':
+      return { count: state.count + 1 };
+    case 'DECREMENT':
+      return { count: state.count - 1 };
     default:
       return state;
   }
 };
 
-export default userReducer;
+export default counterReducer;

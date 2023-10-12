@@ -17,7 +17,7 @@ const {height, width} = Dimensions.get('screen');
 
 
 const apiUrl =
-  'https://ezzybite-pos-api-nest-dev.azurewebsites.net/api/v1/price-menu/store-view?include-items=true';
+  'https://ezzybite-pos-api-nest-dev.azurewebsites.net/api/v1/price-menu/store-view/v2?include-items=true';
 
 const headers = {
   tenantcode: 'buono-pizza',
@@ -47,9 +47,9 @@ const Categories = () => {
 
       const data = await response.json();
       console.log('====================================');
-      console.log('data', data);
+      console.log('data', data?.priceMenuList);
       console.log('====================================');
-      setCategory(data)
+      setCategory(data?.priceMenuList)
       //setItemList(data[0]?.priceMenu?.categories[1]?.items);
       //setFood(data[0]?.priceMenu?.categories);
       // console.log(data);
@@ -63,7 +63,7 @@ const Categories = () => {
     // setVerticalItem(food.find((item)=>item?.name === selectedItem).items)
   }, []);
 
- // console.log("cat",category);
+  console.log("cat",category);
 
  const renderItem=({item}:any)=>{
     return(
